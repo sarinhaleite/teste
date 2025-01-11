@@ -3,33 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Popup e Fundo em Janela</title>
+    <title>Image Grid</title>
     <style>
-        #popup {
-            display: none;
+        /* Estilos para o corpo */
+        body {
+            background-color: #010101; /* Fundo preto */
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Estilos para o cabeçalho */
+        header {
+            background-color: #808080; /* Cinza */
+            color: white; /* Texto branco */
+            text-align: center;
+            padding: 20px 0;
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            font-size: 1.5rem;
-            border-radius: 8px;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        /* Estilos para a seção de imagens */
+        section {
+            margin-top: 70px; /* Ajuste para evitar sobreposição do cabeçalho */
+            column-count: 3;
+            column-gap: 10px;
+            padding: 10px;
+        }
+
+        /* Estilos para as imagens */
+        img {
+            width: 100%;
+            border-radius: 4px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <button id="openBackground">Abrir Fundo</button>
-    <div id="popup">Oi!</div>
+    <!-- Cabeçalho -->
+    <header>
+        <h1>SARINHA LEITE - GALERIA</h1>
+    </header>
 
-    <script>
-        document.getElementById('openBackground').addEventListener('click', () => {
-            const backgroundWindow = window.open('https://g1.globo.com', '_blank', 'width=800,height=600');
-            setTimeout(() => {
-                document.getElementById('popup').style.display = 'block'; // Mostra o pop-up
-            }, 30000);
-        });
-    </script>
+    <!-- Seção de imagens -->
+    <section>
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjehPU33s2k--lExn_TyawN6pd-Z3ooX3NrQ&s" alt="Random Image 1">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRan8QdrtW5kmZ1B3A5FMAA3BpGscnvvA5H1Q&s" alt="Random Image 2">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQ_bSEPIYS9QZKySB4AjI9Q058uGqcsEIdhA&s" alt="Random Image 3">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGtOJB6LpQRpk22JeJUyHiPUGJBaUc0nBQyA&s" alt="Random Image 4">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEiOmK5Gv43XdVsWQmqX6_CCOdQZf37F_jWQ&s" alt="Random Image 5">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJCIon086Y3uCY-Uy4SbTv4BIECXSBtgo4Jw&s" alt="Random Image 6">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYvj91vh8KjUNJzq5emetIr06Hzv7ka3r25A&s" alt="Random Image 7">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRa8mQq66BvV7F5VHXvqTM18nCruoxHeSMfwA&s" alt="Random Image 8">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjehPU33s2k--lExn_TyawN6pd-Z3ooX3NrQ&s" alt="Random Image 1">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRan8QdrtW5kmZ1B3A5FMAA3BpGscnvvA5H1Q&s" alt="Random Image 2">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQ_bSEPIYS9QZKySB4AjI9Q058uGqcsEIdhA&s" alt="Random Image 3">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGtOJB6LpQRpk22JeJUyHiPUGJBaUc0nBQyA&s" alt="Random Image 4">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEiOmK5Gv43XdVsWQmqX6_CCOdQZf37F_jWQ&s" alt="Random Image 5">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJCIon086Y3uCY-Uy4SbTv4BIECXSBtgo4Jw&s" alt="Random Image 6">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYvj91vh8KjUNJzq5emetIr06Hzv7ka3r25A&s" alt="Random Image 7">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRa8mQq66BvV7F5VHXvqTM18nCruoxHeSMfwA&s" alt="Random Image 8">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjehPU33s2k--lExn_TyawN6pd-Z3ooX3NrQ&s" alt="Random Image 1">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRan8QdrtW5kmZ1B3A5FMAA3BpGscnvvA5H1Q&s" alt="Random Image 2">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQ_bSEPIYS9QZKySB4AjI9Q058uGqcsEIdhA&s" alt="Random Image 3">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGtOJB6LpQRpk22JeJUyHiPUGJBaUc0nBQyA&s" alt="Random Image 4">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEiOmK5Gv43XdVsWQmqX6_CCOdQZf37F_jWQ&s" alt="Random Image 5">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJCIon086Y3uCY-Uy4SbTv4BIECXSBtgo4Jw&s" alt="Random Image 6">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYvj91vh8KjUNJzq5emetIr06Hzv7ka3r25A&s" alt="Random Image 7">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRa8mQq66BvV7F5VHXvqTM18nCruoxHeSMfwA&s" alt="Random Image 8">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjehPU33s2k--lExn_TyawN6pd-Z3ooX3NrQ&s" alt="Random Image 1">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRan8QdrtW5kmZ1B3A5FMAA3BpGscnvvA5H1Q&s" alt="Random Image 2">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQ_bSEPIYS9QZKySB4AjI9Q058uGqcsEIdhA&s" alt="Random Image 3">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGtOJB6LpQRpk22JeJUyHiPUGJBaUc0nBQyA&s" alt="Random Image 4">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEiOmK5Gv43XdVsWQmqX6_CCOdQZf37F_jWQ&s" alt="Random Image 5">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJCIon086Y3uCY-Uy4SbTv4BIECXSBtgo4Jw&s" alt="Random Image 6">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYvj91vh8KjUNJzq5emetIr06Hzv7ka3r25A&s" alt="Random Image 7">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRa8mQq66BvV7F5VHXvqTM18nCruoxHeSMfwA&s" alt="Random Image 8">
+    </section>
 </body>
 </html>
