@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popup e Fundo em Janela</title>
+    <style>
+        #popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            font-size: 1.5rem;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <button id="openBackground">Abrir Fundo</button>
+    <div id="popup">Oi!</div>
+
+    <script>
+        document.getElementById('openBackground').addEventListener('click', () => {
+            const backgroundWindow = window.open('https://g1.globo.com', '_blank', 'width=800,height=600');
+            setTimeout(() => {
+                document.getElementById('popup').style.display = 'block'; // Mostra o pop-up
+            }, 30000);
+        });
+    </script>
+</body>
+</html>
