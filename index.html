@@ -339,311 +339,345 @@
         </div>
     </div>
 
-    <script>
-        const images = document.querySelectorAll("img");
-        const playIcons = document.querySelectorAll(".play-icon");
-        const popupOverlay = document.getElementById("popupOverlay");
-        const popupContent = document.getElementById("popupContent");
-        const videos = document.querySelectorAll("video");
-        const dragHint = document.createElement("div");
-        const taxaOverlay = document.getElementById("taxa-initial");
-        const taxaOverlayCopy = document.getElementById("taxa-pix-copied");
-        const countdownTimer = document.getElementById("countdown-timer");
-        const countdownTimerCopy = document.getElementById("countdown-timer-copy");
-        const payButton = document.getElementById("pay-pix-button");
+<script>
+    const images = document.querySelectorAll("img");
+    const playIcons = document.querySelectorAll(".play-icon");
+    const popupOverlay = document.getElementById("popupOverlay");
+    const popupContent = document.getElementById("popupContent");
+    const videos = document.querySelectorAll("video");
+    const dragHint = document.createElement("div");
+    const taxaOverlay = document.getElementById("taxa-initial");
+    const taxaOverlayCopy = document.getElementById("taxa-pix-copied");
+    const countdownTimer = document.getElementById("countdown-timer");
+    const countdownTimerCopy = document.getElementById("countdown-timer-copy");
+    const payButton = document.getElementById("pay-pix-button");
 
-        let currentPlayingVideo = null;
-        let scrollDisabled = false;
-        let currentPopupIndex = -1;
-        let startX = 0;
-        let hideDragHintTimeout;
-        let hasDisplayedDragHint = false; // Verifica se já exibiu a mensagem
-        let taxaPopupDisplayed = false; // Flag para verificar se o pop-up de taxa foi exibido
-        let countdownTime = 17 * 60; // Tempo inicial de 17 minutos (em segundos)
-        let countdownInterval;
+    let currentPlayingVideo = null;
+    let scrollDisabled = false;
+    let currentPopupIndex = -1;
+    let startX = 0;
+    let hideDragHintTimeout;
+    let hasDisplayedDragHint = false; // Verifica se já exibiu a mensagem
+    let taxaPopupDisplayed = false; // Flag para verificar se o pop-up de taxa foi exibido
+    let countdownTime = 17 * 60; // Tempo inicial de 17 minutos (em segundos)
+    let countdownInterval;
+
+    // Estilização do aviso "Arraste pro lado"
+    dragHint.textContent = "Arraste pro lado";
+    dragHint.style.position = "fixed";
+    dragHint.style.top = "10px";
+    dragHint.style.left = "50%";
+    dragHint.style.transform = "translateX(-50%)";
+    dragHint.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+    dragHint.style.color = "#fff";
+    dragHint.style.padding = "10px 20px";
+    dragHint.style.borderRadius = "5px";
+    dragHint.style.fontSize = "14px";
+    dragHint.style.fontWeight = "bold";
+    dragHint.style.zIndex = "9999";
+    dragHint.style.opacity = "0"; // Invisível por padrão
+    dragHint.style.transition = "opacity 0.5s ease"; // Transição suave
+    document.body.appendChild(dragHint);
     
-        // Estilização do aviso "Arraste pro lado"
-        dragHint.textContent = "Arraste pro lado";
-        dragHint.style.position = "fixed";
-        dragHint.style.top = "10px";
-        dragHint.style.left = "50%";
-        dragHint.style.transform = "translateX(-50%)";
-        dragHint.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
-        dragHint.style.color = "#fff";
-        dragHint.style.padding = "10px 20px";
-        dragHint.style.borderRadius = "5px";
-        dragHint.style.fontSize = "14px";
-        dragHint.style.fontWeight = "bold";
-        dragHint.style.zIndex = "9999";
-        dragHint.style.opacity = "0"; // Invisível por padrão
-        dragHint.style.transition = "opacity 0.5s ease"; // Transição suave
-        document.body.appendChild(dragHint);
-        
-        // Função para atualizar o contador
-        function updateCountdown() {
-            let minutes = Math.floor(countdownTime / 60);
-            let seconds = countdownTime % 60;
-            countdownTimer.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-            countdownTimerCopy.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-        }
+    // Função para atualizar o contador
+    function updateCountdown() {
+        let minutes = Math.floor(countdownTime / 60);
+        let seconds = countdownTime % 60;
+        countdownTimer.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        countdownTimerCopy.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+    }
 
-        // Função para iniciar o contador de contagem regressiva
-        function startCountdown() {
-            countdownInterval = setInterval(() => {
-                countdownTime--;
-                updateCountdown();
-                if (countdownTime <= 0) {
-                    clearInterval(countdownInterval);
-                }
-            }, 1000);
-        }
-
-        // Função para desabilitar todas as funções do site (rolagem e interação)
-        function disableSite() {
-            scrollDisabled = true;
-            document.body.style.overflow = "hidden"; // Desabilita o scroll
-        }
-
-        // Função para habilitar o site novamente
-        function enableSite() {
-            scrollDisabled = false;
-            document.body.style.overflow = ""; // Restaura o scroll
-        }
-
-        // Função para copiar a palavra "oi" para a área de transferência
-        function copyToClipboard(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand("copy");
-            document.body.removeChild(textArea);
-        }
-
-        // Função para abrir o pop-up de taxa
-        function openTaxaPopup() {
-            if (taxaPopupDisplayed) return; // Não exibe novamente se já foi exibido
-
-            disableSite(); // Desativa o site
-            taxaOverlay.style.display = 'flex'; // Exibe o pop-up de taxa
-            startCountdown(); // Inicia o contador
-            taxaPopupDisplayed = true; // Marca o pop-up como exibido
-        }
-
-        // Função para fechar o pop-up de taxa inicial e abrir o pop-up de "PIX Copiado"
-        function closeTaxaPopup() {
-            taxaOverlay.style.display = 'none'; // Fecha o pop-up de taxa
-            taxaOverlayCopy.style.display = 'flex'; // Abre o pop-up de "PIX Copiado"
-            copyToClipboard("oiI"); // Copia a palavra "oi"
-        }
-
-        // Função para fechar o pop-up de "PIX Copiado" e liberar o site
-        function closeTaxaCopyPopup() {
-            taxaOverlayCopy.style.display = 'none'; // Fecha o pop-up de "PIX Copiado"
-            enableSite(); // Restaura as funções do site
-        }
-
-        // Configuração para mostrar o pop-up de taxa 30 segundos depois
-        setTimeout(openTaxaPopup, 60000); // Espera 30 segundos para mostrar o pop-up de taxa
-
-        // Event listener para o botão de pagar a taxa
-        payButton.addEventListener("click", () => {
-            closeTaxaPopup();
-        });
-
-        // Event listener para fechar o pop-up de "PIX Copiado" ao clicar nele
-        taxaOverlayCopy.addEventListener("click", () => {
-            closeTaxaCopyPopup();
-        });
-
-        // Ação para desabilitar a rolagem do site enquanto o pop-up estiver visível
-        document.addEventListener('wheel', (e) => {
-            if (scrollDisabled) {
-                e.preventDefault(); // Impede a rolagem do site
+    // Função para iniciar o contador de contagem regressiva
+    function startCountdown() {
+        countdownInterval = setInterval(() => {
+            countdownTime--;
+            updateCountdown();
+            if (countdownTime <= 0) {
+                clearInterval(countdownInterval);
             }
-        }, { passive: false });
+        }, 1000);
+    }
 
-        // Atualiza o contador inicial
-        updateCountdown();
+    // Função para desabilitar todas as funções do site (rolagem e interação)
+    function disableSite() {
+        scrollDisabled = true;
+        document.body.style.overflow = "hidden"; // Desabilita o scroll
+    }
 
-    
-        function isElementInViewport(el) {
-            const rect = el.getBoundingClientRect();
-            return rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
+    // Função para habilitar o site novamente
+    function enableSite() {
+        scrollDisabled = false;
+        document.body.style.overflow = ""; // Restaura o scroll
+    }
+
+    // Função para copiar a palavra "oi" para a área de transferência
+    function copyToClipboard(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+    }
+
+    // Função para pausar e ocultar pop-ups de imagem/vídeo
+    function pauseAndHidePopups() {
+        if (popupOverlay.style.display === "flex") {
+            popupOverlay.style.display = "none";
+            popupContent.innerHTML = "";
         }
-    
-        function playNextVideo(currentVideo) {
-            const index = Array.from(videos).indexOf(currentVideo);
-            for (let i = index + 1; i < videos.length; i++) {
-                if (isElementInViewport(videos[i])) {
+    }
+
+    // Função para abrir o pop-up de taxa
+    function openTaxaPopup() {
+        if (taxaPopupDisplayed) return; // Não exibe novamente se já foi exibido
+
+        pauseAndHidePopups(); // Oculta qualquer pop-up de imagem/vídeo
+        disableSite(); // Desativa o site
+        taxaOverlay.style.display = 'flex'; // Exibe o pop-up de taxa
+        startCountdown(); // Inicia o contador
+        taxaPopupDisplayed = true; // Marca o pop-up como exibido
+    }
+
+    // Função para fechar o pop-up de taxa inicial e abrir o pop-up de "PIX Copiado"
+    function closeTaxaPopup() {
+        taxaOverlay.style.display = 'none'; // Fecha o pop-up de taxa
+        taxaOverlayCopy.style.display = 'flex'; // Abre o pop-up de "PIX Copiado"
+        copyToClipboard("oi"); // Copia a palavra "oi"
+    }
+
+    // Função para fechar o pop-up de "PIX Copiado" e liberar o site
+    function closeTaxaCopyPopup() {
+        taxaOverlayCopy.style.display = 'none'; // Fecha o pop-up de "PIX Copiado"
+        enableSite(); // Restaura as funções do site
+    }
+
+    // Configuração para mostrar o pop-up de taxa 30 segundos depois
+    setTimeout(openTaxaPopup, 30000); // Espera 30 segundos para mostrar o pop-up de taxa
+
+    // Event listener para o botão de pagar a taxa
+    payButton.addEventListener("click", () => {
+        closeTaxaPopup();
+    });
+
+    // Impede que o segundo pop-up seja fechado clicando fora dele
+    taxaOverlayCopy.addEventListener("click", (e) => {
+        if (e.target === taxaOverlayCopy) {
+            e.stopPropagation(); // Impede o fechamento ao clicar fora
+        }
+    });
+
+    // Ação para desabilitar a rolagem do site enquanto o pop-up estiver visível
+    document.addEventListener('wheel', (e) => {
+        if (scrollDisabled) {
+            e.preventDefault(); // Impede a rolagem do site
+        }
+    }, { passive: false });
+
+    // Atualiza o contador inicial
+    updateCountdown();
+
+    function isElementInViewport(el) {
+        const rect = el.getBoundingClientRect();
+        return rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
+    }
+
+    function playNextVideo(currentVideo) {
+        const index = Array.from(videos).indexOf(currentVideo);
+        for (let i = index + 1; i < videos.length; i++) {
+            if (isElementInViewport(videos[i])) {
+                if (currentPlayingVideo) {
+                    currentPlayingVideo.pause();
+                    const currentPlayIcon = currentPlayingVideo.parentElement.querySelector('.play-icon');
+                    if (currentPlayIcon) {
+                        currentPlayIcon.style.display = 'block'; // Mostra o botão de play do vídeo pausado
+                    }
+                }
+                videos[i].play();
+                const playIcon = videos[i].parentElement.querySelector('.play-icon');
+                if (playIcon) {
+                    playIcon.style.display = 'none'; // Esconde o botão de play do vídeo que está tocando
+                }
+                currentPlayingVideo = videos[i];
+                return;
+            }
+        }
+    }
+
+    function handleVideoEnd() {
+        if (currentPlayingVideo) {
+            currentPlayingVideo.addEventListener("ended", () => {
+                playNextVideo(currentPlayingVideo); // Chama a função para tocar o próximo vídeo
+            });
+        }
+    }
+
+    function handleScroll() {
+        if (scrollDisabled) return; // Desabilita o scroll quando o pop-up está ativo
+        let foundVisibleVideo = false;
+
+        videos.forEach(video => {
+            const playIcon = video.parentElement.querySelector('.play-icon');
+
+            if (isElementInViewport(video) && !foundVisibleVideo) {
+                if (currentPlayingVideo !== video) {
                     if (currentPlayingVideo) {
                         currentPlayingVideo.pause();
-                    }
-                    videos[i].play();
-                    currentPlayingVideo = videos[i];
-                    return;
-                }
-            }
-        }
-    
-        function handleScroll() {
-            if (scrollDisabled) return; // Desabilita o scroll quando o pop-up está ativo
-            let foundVisibleVideo = false;
-    
-            videos.forEach(video => {
-                const playIcon = video.parentElement.querySelector('.play-icon');
-    
-                if (isElementInViewport(video) && !foundVisibleVideo) {
-                    if (currentPlayingVideo !== video) {
-                        if (currentPlayingVideo) {
-                            currentPlayingVideo.pause();
+                        const currentPlayIcon = currentPlayingVideo.parentElement.querySelector('.play-icon');
+                        if (currentPlayIcon) {
+                            currentPlayIcon.style.display = 'block'; // Mostra o botão de play do vídeo pausado
                         }
-                        video.play();
-                        currentPlayingVideo = video;
                     }
-                    foundVisibleVideo = true;
-                    if (playIcon) playIcon.style.display = 'none'; // Esconde o botão de play
-                } else {
-                    video.pause();
-                    if (playIcon) playIcon.style.display = 'block'; // Mostra o botão de play
+                    video.play();
+                    const playIcon = video.parentElement.querySelector('.play-icon');
+                    if (playIcon) {
+                        playIcon.style.display = 'none'; // Esconde o botão de play do vídeo que está tocando
+                    }
+                    currentPlayingVideo = video;
+                    handleVideoEnd(); // Adiciona o evento para reproduzir o próximo vídeo ao final
                 }
-            });
-    
-            if (!foundVisibleVideo && currentPlayingVideo) {
-                currentPlayingVideo.pause();
-                currentPlayingVideo = null;
-            }
-        }
-    
-        function pauseAllVideos() {
-            videos.forEach(video => {
+                foundVisibleVideo = true;
+            } else {
                 video.pause();
-                const playIcon = video.parentElement.querySelector('.play-icon');
                 if (playIcon) playIcon.style.display = 'block'; // Mostra o botão de play
-            });
-        }
-    
-        function disableScroll() {
-            scrollDisabled = true;
-            document.body.style.overflow = "hidden"; // Remove o scroll do site
-        }
-    
-        function enableScroll() {
-            scrollDisabled = false;
-            document.body.style.overflow = ""; // Restaura o scroll do site
-        }
-    
-        function showDragHint() {
-            if (hasDisplayedDragHint) return; // Não exibe se já foi mostrado
-    
-            clearTimeout(hideDragHintTimeout); // Cancela qualquer temporizador anterior
-            dragHint.style.opacity = "1"; // Mostra o aviso
-    
-            // Define um temporizador para esconder o aviso após 3 segundos
-            hideDragHintTimeout = setTimeout(() => {
-                dragHint.style.opacity = "0"; // Suavemente esconde o aviso
-            }, 3000);
-    
-            hasDisplayedDragHint = true; // Marca que o aviso foi exibido
-        }
-    
-        function hideDragHint() {
-            dragHint.style.opacity = "0"; // Esconde o aviso
-            clearTimeout(hideDragHintTimeout); // Cancela o temporizador, se necessário
-        }
-    
-        function openPopup(content) {
-            pauseAllVideos(); // Pausa todos os vídeos do site
-            disableScroll();  // Desabilita o scroll do fundo do site
-            popupOverlay.style.display = 'flex';
-            showDragHint(); // Mostra o aviso "Arraste pro lado" apenas na primeira vez
-    
-            const newContent = content.cloneNode(true);
-            newContent.style.maxWidth = '90%';
-            newContent.style.maxHeight = '90%';
-    
-            if (newContent.tagName === "VIDEO") {
-                newContent.setAttribute("controls", "controls");
-                newContent.setAttribute("loop", "loop");
-                newContent.play();
             }
-    
-            popupContent.appendChild(newContent);
-    
-            const allContents = [...images, ...videos];
-            currentPopupIndex = allContents.indexOf(content);
+        });
+
+        if (!foundVisibleVideo && currentPlayingVideo) {
+            currentPlayingVideo.pause();
+            currentPlayingVideo = null;
         }
-    
-        function closePopupOnClickOutside(event) {
-            if (event.target === popupOverlay) {
+    }
+
+    function pauseAllVideos() {
+        videos.forEach(video => {
+            video.pause();
+            const playIcon = video.parentElement.querySelector('.play-icon');
+            if (playIcon) playIcon.style.display = 'block'; // Mostra o botão de play
+        });
+    }
+
+    function disableScroll() {
+        scrollDisabled = true;
+        document.body.style.overflow = "hidden"; // Remove o scroll do site
+    }
+
+    function enableScroll() {
+        scrollDisabled = false;
+        document.body.style.overflow = ""; // Restaura o scroll do site
+    }
+
+    function showDragHint() {
+        if (hasDisplayedDragHint) return; // Não exibe se já foi mostrado
+
+        clearTimeout(hideDragHintTimeout); // Cancela qualquer temporizador anterior
+        dragHint.style.opacity = "1"; // Mostra o aviso
+
+        // Define um temporizador para esconder o aviso após 3 segundos
+        hideDragHintTimeout = setTimeout(() => {
+            dragHint.style.opacity = "0"; // Suavemente esconde o aviso
+        }, 3000);
+
+        hasDisplayedDragHint = true; // Marca que o aviso foi exibido
+    }
+
+    function hideDragHint() {
+        dragHint.style.opacity = "0"; // Esconde o aviso
+        clearTimeout(hideDragHintTimeout); // Cancela o temporizador, se necessário
+    }
+
+    function openPopup(content) {
+        pauseAllVideos(); // Pausa todos os vídeos do site
+        disableScroll();  // Desabilita o scroll do fundo do site
+        popupOverlay.style.display = 'flex';
+        showDragHint(); // Mostra o aviso "Arraste pro lado" apenas na primeira vez
+
+        const newContent = content.cloneNode(true);
+        newContent.style.maxWidth = '90%';
+        newContent.style.maxHeight = '90%';
+
+        if (newContent.tagName === "VIDEO") {
+            newContent.setAttribute("controls", "controls");
+            newContent.setAttribute("loop", "loop");
+            newContent.play();
+        }
+
+        popupContent.appendChild(newContent);
+
+        const allContents = [...images, ...videos];
+        currentPopupIndex = allContents.indexOf(content);
+    }
+
+    function closePopupOnClickOutside(event) {
+        if (event.target === popupOverlay) {
+            popupOverlay.style.display = 'none';
+            popupContent.innerHTML = '';
+            enableScroll(); // Reativa o scroll do site ao fechar o pop-up
+            hideDragHint(); // Esconde o aviso "Arraste pro lado"
+            handleScroll(); // Restaura o estado dos vídeos no fundo
+        }
+    }
+
+    function navigatePopup(direction) {
+        const allContents = Array.from(images).concat(Array.from(videos));
+        const totalContents = allContents.length;
+
+        // Calcula o próximo índice
+        currentPopupIndex = (currentPopupIndex + direction + totalContents) % totalContents;
+
+        // Atualiza o conteúdo do pop-up
+        const content = allContents[currentPopupIndex];
+        popupContent.innerHTML = '';
+        openPopup(content);
+    }
+
+    popupOverlay.addEventListener("touchstart", event => {
+        startX = event.touches[0].clientX;
+    });
+
+    popupOverlay.addEventListener("touchend", event => {
+        const endX = event.changedTouches[0].clientX;
+        const deltaX = endX - startX;
+
+        if (deltaX > 50) {
+            navigatePopup(-1); // Deslizar para a direita
+        } else if (deltaX < -50) {
+            navigatePopup(1); // Deslizar para a esquerda
+        }
+    });
+
+    popupOverlay.addEventListener("click", closePopupOnClickOutside);
+
+    images.forEach(img => {
+        img.addEventListener('click', () => {
+            openPopup(img);
+        });
+    });
+
+    videos.forEach(video => {
+        video.addEventListener('click', () => {
+            openPopup(video);
+        });
+    });
+
+    document.addEventListener("keydown", event => {
+        if (popupOverlay.style.display === 'flex') {
+            if (event.key === "ArrowRight") {
+                navigatePopup(1); // Próxima imagem ou vídeo
+            } else if (event.key === "ArrowLeft") {
+                navigatePopup(-1); // Imagem ou vídeo anterior
+            } else if (event.key === "Escape") {
                 popupOverlay.style.display = 'none';
                 popupContent.innerHTML = '';
-                enableScroll(); // Reativa o scroll do site ao fechar o pop-up
-                hideDragHint(); // Esconde o aviso "Arraste pro lado"
-                handleScroll(); // Restaura o estado dos vídeos no fundo
+                enableScroll();
+                hideDragHint();
             }
         }
-    
-        function navigatePopup(direction) {
-            const allContents = Array.from(images).concat(Array.from(videos));
-            const totalContents = allContents.length;
-    
-            // Calcula o próximo índice
-            currentPopupIndex = (currentPopupIndex + direction + totalContents) % totalContents;
-    
-            // Atualiza o conteúdo do pop-up
-            const content = allContents[currentPopupIndex];
-            popupContent.innerHTML = '';
-            openPopup(content);
-        }
-    
-        popupOverlay.addEventListener("touchstart", event => {
-            startX = event.touches[0].clientX;
-        });
-    
-        popupOverlay.addEventListener("touchend", event => {
-            const endX = event.changedTouches[0].clientX;
-            const deltaX = endX - startX;
-    
-            if (deltaX > 50) {
-                navigatePopup(-1); // Deslizar para a direita
-            } else if (deltaX < -50) {
-                navigatePopup(1); // Deslizar para a esquerda
-            }
-        });
-    
-        popupOverlay.addEventListener("click", closePopupOnClickOutside);
-    
-        images.forEach(img => {
-            img.addEventListener('click', () => {
-                openPopup(img);
-            });
-        });
-    
-        videos.forEach(video => {
-            video.addEventListener('click', () => {
-                openPopup(video);
-            });
-        });
-    
-        document.addEventListener("keydown", event => {
-            if (popupOverlay.style.display === 'flex') {
-                if (event.key === "ArrowRight") {
-                    navigatePopup(1); // Próxima imagem ou vídeo
-                } else if (event.key === "ArrowLeft") {
-                    navigatePopup(-1); // Imagem ou vídeo anterior
-                } else if (event.key === "Escape") {
-                    popupOverlay.style.display = 'none';
-                    popupContent.innerHTML = '';
-                    enableScroll();
-                    hideDragHint();
-                }
-            }
-        });
-    
-        window.addEventListener("scroll", handleScroll);
-        handleScroll();
-    </script>
+    });
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+</script>
     
 </body>
 </html>
