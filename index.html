@@ -433,10 +433,20 @@
         if (taxaPopupDisplayed) return; // Não exibe novamente se já foi exibido
 
         pauseAndHidePopups(); // Oculta qualquer pop-up de imagem/vídeo
+        pauseAllVideos(); // Pausa todos os vídeos em reprodução
         disableSite(); // Desativa o site
         taxaOverlay.style.display = 'flex'; // Exibe o pop-up de taxa
         startCountdown(); // Inicia o contador
         taxaPopupDisplayed = true; // Marca o pop-up como exibido
+    }
+
+    // Função para pausar todos os vídeos em reprodução
+    function pauseAllVideos() {
+        videos.forEach(video => {
+            if (!video.paused) {
+                video.pause();
+            }
+        });
     }
 
     // Função para fechar o pop-up de taxa inicial e abrir o pop-up de "PIX Copiado"
